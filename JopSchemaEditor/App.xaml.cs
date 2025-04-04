@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace JopSchemaEditor;
@@ -8,7 +9,7 @@ namespace JopSchemaEditor;
 /// </summary>
 public partial class App : Application
 {
-    internal static readonly JOPData[,] Fields = new JOPData[480, 180];
+    internal static JOPData[,] Fields = new JOPData[128, 64];
 
     internal static readonly object Lock = new();
 
@@ -51,8 +52,13 @@ public partial class App : Application
                 selectedColor.IsSelected = true;
         }
     }
+
+    internal static MainWindow Window = null!;
+
+    internal static volatile bool Changed = false;
 }
 
+[StructLayout(LayoutKind.Sequential)]
 internal struct JOPData
 {
     public byte Data;

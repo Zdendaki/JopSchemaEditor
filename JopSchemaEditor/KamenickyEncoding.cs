@@ -60,6 +60,8 @@ namespace JopSchemaEditor
 
         private const byte UNK = (byte)'?';
 
+        private static readonly char[] SPECIAL_CHARS = ['(', ')', '[', ']', '{', '}', '~', '/', '\\', '<', '>', '=', '+', '-', '.', ',', '^', '_', '\'', '"', '|', '?', '!', '#', '$', ':', ';', '*', '&', '%', ' ', '@', '`'];
+
         public static string Encode(this string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -121,7 +123,7 @@ namespace JopSchemaEditor
 
         public static bool IsKamenickyLetterOrDigit(this char c)
         {
-            if (char.IsAsciiLetterOrDigit(c))
+            if (char.IsAsciiLetterOrDigit(c) || SPECIAL_CHARS.Contains(c))
                 return true;
 
             foreach (var x in _convert)

@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mg="clr-namespace:MonoGame.WpfCore.MonoGameControls"
         xmlns:local="clr-namespace:JopSchemaEditor"
-        mc:Ignorable="d"
-        Title="JOP editor" Height="768" Width="1024">
+        mc:Ignorable="d" Closing="Window_Closing"
+        Title="JOP editor" Background="Black" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -15,16 +15,22 @@
 
         <Menu Background="Blue" Foreground="White" Padding="10,5" BorderThickness="0">
             <MenuItem Header="Soubor">
-                <MenuItem Header="Nový" Foreground="Black" />
-                <MenuItem Header="Otevřít..." Foreground="Black" />
-                <MenuItem Header="Uložit" Foreground="Black" />
-                <MenuItem Header="Uložit jako..." Foreground="Black" />
+                <MenuItem Header="Nový" Foreground="Black" Click="New_Click" />
+                <MenuItem Header="Otevřít..." Foreground="Black" Click="Open_Click" />
+                <MenuItem Header="Uložit" x:Name="saveButton" Foreground="Black" Click="Save_Click" IsEnabled="False" />
+                <MenuItem Header="Uložit jako..." Foreground="Black" Click="SaveAs_Click" />
             </MenuItem>
+
+            <MenuItem Header="Exportovat">
+                <MenuItem Header="Celá obrazovka" Foreground="Black" Click="Export_Click" />
+                <MenuItem Header="Oříznutá obrazovka" Foreground="Black" Click="ExportCropped_Click" />
+            </MenuItem>
+            <MenuItem Header="Velikost obrazovky" Click="Resize_Click" />
         </Menu>
         
-        <mg:MonoGameContentControl x:Name="JopControl" Grid.Row="1">
+        <mg:MonoGameContentControl x:Name="JopControl" Grid.Row="1" Width="1024" Height="768">
             <mg:MonoGameContentControl.DataContext>
-                <local:JOP />
+                <local:JOP x:Name="Jop" />
             </mg:MonoGameContentControl.DataContext>
         </mg:MonoGameContentControl>
     </Grid>

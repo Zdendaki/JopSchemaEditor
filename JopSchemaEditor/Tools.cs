@@ -12,6 +12,13 @@ namespace JopSchemaEditor
         private readonly int Width = 204;
         private readonly int Height = 768;
 
+        private const string VYBRAT = "VYBRAT";
+        private const string VYMAZAT = "VYMAZAT";
+        private const string OBARVIT = "OBARVIT";
+        private const string TEXT = "TEXT";
+        private const string SVETLY_REZIM = " SV\u0089TL\u009d RE\u0092IM ";
+        private const string MRIZKA = " M\u009e\u008b\u0092KA ";
+
         private SpriteBatch _spriteBatch = null!;
         private GameStore _store = null!;
 
@@ -25,52 +32,144 @@ namespace JopSchemaEditor
             _store = new(Content, GraphicsDevice, 8, 12);
             _spriteBatch = new(GraphicsDevice);
 
-            _buttons.Add(BigButton(0, "VYBRAT"));
-            _buttons.Add(BigButton(0, "VYMAZAT"));
-            _buttons.Add(BigButton(0, "TEXT"));
-            _buttons.Add(SmallButton(0, " SV\u0089TL\u009d RE\u0092IM ", BackgroundChange));
+            _buttons.Add(BigButton(-1, VYBRAT));
+            _buttons.Add(BigButton(-2, VYMAZAT));
+            _buttons.Add(BigButton(-3, TEXT, TextClick));
+            _buttons.Add(BigButton(-4, OBARVIT));
+            _buttons.Add(SmallButton(0, SVETLY_REZIM, BackgroundChange));
 
-            MGButton grid = SmallButton(0, " M\u009e\u008b\u0092KA ", GridChange);
+            MGButton grid = SmallButton(0, MRIZKA, GridChange);
             grid.Background = App.Grid ? ESAColor.Orange : ESAColor.DarkBlue;
             _buttons.Add(grid);
 
-            _newButtonX = 4;
-            _newButtonY += 32;
+            LineBreak();
 
-            for (int i = 1; i < 255; i++)
+            // Koleje a nástupiště
+            _buttons.Add(SmallButton(223));
+            _buttons.Add(SmallButton(4));
+            _buttons.Add(SmallButton(193));
+            _buttons.Add(SmallButton(242));
+            _buttons.Add(SmallButton(194));
+            _buttons.Add(SmallButton(241));
+            Space();
+            _buttons.Add(SmallButton(239));
+            _buttons.Add(SmallButton(187));
+            _buttons.Add(SmallButton(188));
+            LineBreak();
+
+            // Manipulační koleje
+            _buttons.Add(SmallButton(1));
+            _buttons.Add(SmallButton(6));
+            _buttons.Add(SmallButton(28));
+            _buttons.Add(SmallButton(31));
+            _buttons.Add(SmallButton(30));
+            _buttons.Add(SmallButton(29));
+            _buttons.Add(SmallButton(177));
+            _buttons.Add(SmallButton(178));
+            _buttons.Add(SmallButton(179));
+            _buttons.Add(SmallButton(180));
+            LineBreak();
+
+            // Výhybky
+            _buttons.Add(SmallButton(207));
+            _buttons.Add(SmallButton(206));
+            _buttons.Add(SmallButton(205));
+            _buttons.Add(SmallButton(222));
+            // - PSt
+            _buttons.Add(SmallButton(245));
+            _buttons.Add(SmallButton(21));
+            // -
+            _buttons.Add(SmallButton(172));
+            _buttons.Add(SmallButton(174));
+            _buttons.Add(SmallButton(181));
+            _buttons.Add(SmallButton(175));
+            LineBreak();
+
+            // Návěstidla a TS
+            _buttons.Add(SmallButton(229));
+            _buttons.Add(SmallButton(230));
+            _buttons.Add(SmallButton(7));
+            _buttons.Add(SmallButton(9));
+            // - PSt
+            _buttons.Add(SmallButton(240));
+            _buttons.Add(SmallButton(173));
+            // -
+            _buttons.Add(SmallButton(237));
+            _buttons.Add(SmallButton(238));
+            _buttons.Add(SmallButton(13));
+            _buttons.Add(SmallButton(14));
+            LineBreak();
+
+            // Čísla speciální
+            _buttons.Add(SmallButton(189));
+            _buttons.Add(SmallButton(246));
+            _buttons.Add(SmallButton(247));
+            _buttons.Add(SmallButton(248));
+            _buttons.Add(SmallButton(249));
+            _buttons.Add(SmallButton(250));
+            _buttons.Add(SmallButton(251));
+            _buttons.Add(SmallButton(252));
+            _buttons.Add(SmallButton(253));
+            _buttons.Add(SmallButton(254));
+            LineBreak();
+
+            LineBreak(true);
+
+            for (byte i = 1; i < 255; i++)
             {
                 char c = (char)i;
 
                 if (c.IsKamenickyLetterOrDigit())
                     continue;
 
-                _buttons.Add(SmallButton(i, ((char)i).ToString()));
+                if (_buttons.Any(x => x.Name == i))
+                    continue;
+
+                _buttons.Add(SmallButton(i));
             }
+
 
             _newButtonX = 4;
             _newButtonY = Height - 64;
             int colorId = _buttons.Count;
-            _buttons.AddRange(ESAColor.GetColors().Select(color => ColorButton(color.Name, color.Color)));
+            _buttons.AddRange(ESAColor.GetColors().Select(color => ColorButton(color.Value, color.Color)));
 
             App.SelectedButton = _buttons[0];
             App.SelectedColor = _buttons[colorId];
         }
 
-        private MGButton BigButton(byte name, string text) => BigButton(name, text, ButtonClick);
-
-        private MGButton BigButton(byte name, string text, MouseClickEventHandler mouseClick)
+        private void LineBreak(bool force = false)
         {
-            if (_newButtonX != 4)
+            if (_newButtonX != 4 || force)
             {
                 _newButtonX = 4;
                 _newButtonY += 32;
             }
+        }
+
+        private void Space(int width = 1)
+        {
+            int w = width * 20;
+
+            if (_newButtonX + w > Width - 4)
+            {
+                _newButtonX = 4;
+                _newButtonY += 32;
+            }
+            _newButtonX += w;
+        }
+
+        private MGButton BigButton(int name, string text) => BigButton(name, text, ButtonClick);
+
+        private MGButton BigButton(int name, string text, MouseClickEventHandler mouseClick)
+        {
+            LineBreak();
             MGButton button = new(name, new(_newButtonX, _newButtonY, Width - 8, 24), text, ESAColor.White, ESAColor.DarkBlue, mouseClick);
             _newButtonY += 32;
             return button;
         }
 
-        private MGButton SmallButton(int name, string text) => SmallButton(name, text, ButtonClick);
+        private MGButton SmallButton(byte name) => SmallButton(name, ((char)name).ToString(), ButtonClick);
 
         private MGButton SmallButton(int name, string text, MouseClickEventHandler mouseClick)
         {
@@ -112,6 +211,14 @@ namespace JopSchemaEditor
         {
             if (mouseButton == MouseButton.Left)
                 App.SelectedColor = button;
+        }
+
+        private void TextClick(MouseButton mouseButton, MGButton button)
+        {
+            if (mouseButton != MouseButton.Left)
+                return;
+
+            App.Window.SetText();
         }
 
         private void BackgroundChange(MouseButton mouseButton, MGButton button)

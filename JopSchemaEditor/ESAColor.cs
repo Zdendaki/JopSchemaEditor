@@ -146,24 +146,24 @@ namespace JopSchemaEditor
 
         public static IEnumerable<ColorData> GetColors()
         {
-            yield return new ColorData(Red, 4096);
-            yield return new ColorData(DarkRed, 4097);
-            yield return new ColorData(Violet, 4098);
-            yield return new ColorData(DarkViolet, 4099);
-            yield return new ColorData(Turquoise, 4100);
-            yield return new ColorData(DarkTurquoise, 4101);
-            yield return new ColorData(White, 4102);
-            yield return new ColorData(Green, 4103);
-            yield return new ColorData(DarkGreen, 4104);
-            yield return new ColorData(Brown, 4105);
-            yield return new ColorData(Blue, 4106);
-            yield return new ColorData(DarkBlue, 4107);
-            yield return new ColorData(Yellow, 4108);
-            yield return new ColorData(Gray, 4109);
-            yield return new ColorData(DarkGray, 4110);
-            yield return new ColorData(Black, 4111);
-            yield return new ColorData(Orange, 4112);
-            yield return new ColorData(Transparent, 4113);
+            yield return new ColorData(Red, 4096, nameof(Red));
+            yield return new ColorData(DarkRed, 4097, nameof(DarkRed));
+            yield return new ColorData(Violet, 4098, nameof(Violet));
+            yield return new ColorData(DarkViolet, 4099, nameof(DarkViolet));
+            yield return new ColorData(Turquoise, 4100, nameof(Turquoise));
+            yield return new ColorData(DarkTurquoise, 4101, nameof(DarkTurquoise));
+            yield return new ColorData(White, 4102, nameof(White));
+            yield return new ColorData(Green, 4103, nameof(Green));
+            yield return new ColorData(DarkGreen, 4104, nameof(DarkGreen));
+            yield return new ColorData(Brown, 4105, nameof(Brown));
+            yield return new ColorData(Blue, 4106, nameof(Blue));
+            yield return new ColorData(DarkBlue, 4107, nameof(DarkBlue));
+            yield return new ColorData(Yellow, 4108, nameof(Yellow));
+            yield return new ColorData(Gray, 4109, nameof(Gray));
+            yield return new ColorData(DarkGray, 4110, nameof(DarkGray));
+            yield return new ColorData(Black, 4111, nameof(Black));
+            yield return new ColorData(Orange, 4112, nameof(Orange));
+            yield return new ColorData(Transparent, 4113, nameof(Transparent));
         }
     }
 
@@ -171,12 +171,17 @@ namespace JopSchemaEditor
     {
         public Color Color { get; init; }
 
-        public int Name { get; init; }
+        public int Value { get; init; }
 
-        public ColorData(Color color, int name)
+        public string Name { get; init; }
+
+        public ColorData(Color color, int value, string name)
         {
             Color = color;
+            Value = value;
             Name = name;
         }
+
+        public override string ToString() => Name;
     }
 }

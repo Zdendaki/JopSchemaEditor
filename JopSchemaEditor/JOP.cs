@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 using MonoGame.Extended.BitmapFonts;
 using MonoGame.WpfCore.MonoGameControls;
+using System.IO;
 
 namespace JopSchemaEditor
 {
@@ -93,16 +95,35 @@ namespace JopSchemaEditor
         {
             int name = App.SelectedButton.Name;
 
-            if (name > byte.MaxValue || name < byte.MinValue)
+            if (name == -2) // VYMAZAT
+            {
+                RemoveField();
+                return true;
+            }
+            
+            if (name == -4) // OBARVIT
+            {
+                ref JOPData data = ref App.Fields[_mouseX, _mouseY];
+                if (data.Data > 0)
+                {
+                    data.Color = App.SelectedColor.Background;
+                    App.Changed = true;
+                }
+                return true;
+            }
+
+            if (name > byte.MaxValue || name <= 0)
                 return false;
 
             App.Fields[_mouseX, _mouseY] = new((byte)name, App.SelectedColor.Background);
+            App.Changed = true;
             return true;
         }
 
         private void RemoveField()
         {
             App.Fields[_mouseX, _mouseY] = default;
+            App.Changed = true;
         }
 
         public override void Draw(GameTime gameTime)
@@ -112,6 +133,7 @@ namespace JopSchemaEditor
             _spriteBatch.Begin();
             DrawGrid();
             DrawFields();
+            DrawSelection();
             _spriteBatch.End();
         }
 
@@ -120,9 +142,9 @@ namespace JopSchemaEditor
             if (!App.Grid)
                 return;
 
-            for (int x = _store.FontWidth; x < Width; x += _store.FontWidth)
+            for (int x = _store.FontWidth / 2; x < Width; x += _store.FontWidth)
             {
-                for (int y = _store.FontHeight; y < Height; y += _store.FontHeight)
+                for (int y = _store.FontHeight / 2; y < Height; y += _store.FontHeight)
                 {
                     _spriteBatch.Draw(_store.FillTexture, new Vector2(x, y), ESAColor.DarkGray);
                 }
@@ -143,6 +165,95 @@ namespace JopSchemaEditor
                     _spriteBatch.DrawString(_store.ETM, c.ToString(), new Vector2(x * _store.FontWidth, y * _store.FontHeight), App.Fields[x, y].Color);
                 }
             }
+        }
+
+        private void DrawSelection()
+        {
+            int stringLength;
+            lock (App.Lock)
+            {
+                stringLength = App.AwaitingString?.Length ?? 0;
+            }
+
+            if (stringLength == 0)
+                return;
+
+            _spriteBatch.DrawRectangle(_mouseX * _store.FontWidth, _mouseY * _store.FontHeight, stringLength * _store.FontWidth, _store.FontHeight, ESAColor.Green, 1f);
+        }
+
+        public void SaveScreenshot(string fileName)
+        {
+            int width = App.Fields.GetLength(0) * _store.FontWidth;
+            int height = App.Fields.GetLength(1) * _store.FontHeight;
+
+            try
+            {
+                using FileStream stream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                using RenderTarget2D texture = new(GraphicsDevice, width, height);
+
+                GraphicsDevice.SetRenderTarget(texture);
+                Draw(new GameTime());
+                GraphicsDevice.SetRenderTarget(null);
+                texture.SaveAsPng(stream, width, height);
+                texture.Dispose();
+            }
+            catch { }
+        }
+
+        public void SaveScreenshotCropped(string fileName)
+        {
+            int width = App.Fields.GetLength(0) * _store.FontWidth;
+            int height = App.Fields.GetLength(1) * _store.FontHeight;
+
+            int firstX = int.MaxValue;
+            int firstY = int.MaxValue;
+            int lastX = 0;
+            int lastY = 0;
+
+            for (int x = 0; x < App.Fields.GetLength(0); x++)
+            {
+                for (int y = 0; y < App.Fields.GetLength(1); y++)
+                {
+                    if (App.Fields[x, y].Data > 0)
+                    {
+                        if (x < firstX)
+                            firstX = x;
+                        if (x > lastX)
+                            lastX = x;
+
+                        if (y < firstY)
+                            firstY = y;
+                        if (y > lastY)
+                            lastY = y;
+                    }
+                }
+            }
+
+            if (firstX > lastX || firstY > lastY)
+                return;
+
+            int croppedWidth = (lastX - firstX + 1) * _store.FontWidth;
+            int croppedHeight = (lastY - firstY + 1) * _store.FontHeight;
+
+            Rectangle crop = new(firstX * _store.FontWidth, firstY * _store.FontHeight, croppedWidth, croppedHeight);
+
+            try
+            {
+                using FileStream stream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                using RenderTarget2D texture = new(GraphicsDevice, width, height);
+                using RenderTarget2D croppedTexture = new(GraphicsDevice, croppedWidth, croppedHeight);
+
+                GraphicsDevice.SetRenderTarget(texture);
+                Draw(new GameTime());
+                GraphicsDevice.SetRenderTarget(null);
+
+                Color[] data = new Color[croppedWidth * croppedHeight];
+                texture.GetData(0, crop, data, 0, data.Length);
+
+                croppedTexture.SetData(data);
+                croppedTexture.SaveAsPng(stream, croppedWidth, croppedHeight);
+            }
+            catch { }
         }
     }
 }

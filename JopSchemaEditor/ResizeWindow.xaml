@@ -1,0 +1,21 @@
+﻿<Window x:Class="JopSchemaEditor.ResizeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JopSchemaEditor"
+        mc:Ignorable="d" WindowStartupLocation="CenterOwner"
+        Title="Změnit velikost" Width="300" SizeToContent="Height" ResizeMode="NoResize">
+    <StackPanel Orientation="Vertical" Margin="20">
+        <ComboBox x:Name="resolution" Margin="5">
+            <local:Resolution Width="640" Height="480" />
+            <local:Resolution Width="800" Height="600" />
+            <local:Resolution Width="1024" Height="768" />
+            <local:Resolution Width="1280" Height="720" />
+            <local:Resolution Width="1600" Height="900" />
+            <local:Resolution Width="1920" Height="1080" />
+            <local:Resolution Width="2560" Height="1440" />
+        </ComboBox>
+        <Button Content="Uložit" Margin="5" Click="Save_Click" />
+    </StackPanel>
+</Window>
