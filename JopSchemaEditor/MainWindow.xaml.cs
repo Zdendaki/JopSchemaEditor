@@ -27,16 +27,16 @@ public partial class MainWindow : Window
         }
     }
 
-    private void RefreshFileName()
+    internal void RefreshFileName()
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            Title = $"JOP editor [{App.Fields.GetLength(0) * 8}x{App.Fields.GetLength(1) * 12}]";
+            Title = $"JOP editor [{App.Fields.GetLength(0) * 8}x{App.Fields.GetLength(1) * 12}]{(App.Changed ? '*' : null)}";
             saveButton.IsEnabled = false;
         }
         else
         {
-            Title = $"JOP editor - {fileName} [{App.Fields.GetLength(0) * 8}x{App.Fields.GetLength(1) * 12}]";
+            Title = $"JOP editor - {fileName} [{App.Fields.GetLength(0) * 8}x{App.Fields.GetLength(1) * 12}]{(App.Changed ? '*' : null)}";
             saveButton.IsEnabled = true;
         }
     }

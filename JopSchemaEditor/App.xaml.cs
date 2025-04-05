@@ -55,7 +55,16 @@ public partial class App : Application
 
     internal static MainWindow Window = null!;
 
-    internal static volatile bool Changed = false;
+    private static volatile bool changed = false;
+    internal static bool Changed
+    {
+        get => changed;
+        set
+        {
+            changed = value;
+            Window.Dispatcher.BeginInvoke(Window.RefreshFileName);
+        }
+    }
 }
 
 [StructLayout(LayoutKind.Sequential)]
