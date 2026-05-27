@@ -14,6 +14,8 @@
             <local:Resolution Width="1280" Height="720" />
             <local:Resolution Width="1600" Height="900" />
             <local:Resolution Width="1920" Height="1080" />
+            <local:Resolution Width="1920" Height="1200" />
+            <local:Resolution Width="2048" Height="768" />
             <local:Resolution Width="2560" Height="1440" />
         </ComboBox>
         <Button Content="Uložit" Margin="5" Click="Save_Click" />

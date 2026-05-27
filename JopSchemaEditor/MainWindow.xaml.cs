@@ -302,7 +302,7 @@ public partial class MainWindow : Window
             return;
 
         MessageBoxResult result = MessageBox.Show(this, "Soubor byl změněn. Chcete uložit změny?", "Uložit změny?", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
-        
+
         if (result == MessageBoxResult.Cancel)
             e.Cancel = true;
         else if (result == MessageBoxResult.Yes)
@@ -312,5 +312,11 @@ public partial class MainWindow : Window
             else
                 Save(FileName);
         }
+    }
+
+    private void JopControl_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+    {
+        var position = e.GetPosition(JopControl);
+        PositionLabel.Content = $"{(int)position.X / 8}:{(int)position.Y / 12}";
     }
 }

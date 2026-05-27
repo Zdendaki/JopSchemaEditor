@@ -13,7 +13,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Menu Background="Blue" Foreground="White" Padding="10,5" BorderThickness="0">
+        <Menu Background="Blue" Foreground="White" Padding="10,2" BorderThickness="0" Height="24">
             <MenuItem Header="Soubor">
                 <MenuItem Header="Nový" Foreground="Black" Click="New_Click" />
                 <MenuItem Header="Otevřít..." Foreground="Black" Click="Open_Click" />
@@ -27,8 +27,10 @@
             </MenuItem>
             <MenuItem Header="Velikost obrazovky" Click="Resize_Click" />
         </Menu>
-        
-        <mg:MonoGameContentControl x:Name="JopControl" Grid.Row="1" Width="1024" Height="768">
+
+        <Label x:Name="PositionLabel" HorizontalAlignment="Right" Foreground="White" Content="0:0" Padding="0" VerticalAlignment="Center" Margin="10,0" />
+
+        <mg:MonoGameContentControl x:Name="JopControl" Grid.Row="1" Width="1024" Height="768" MouseMove="JopControl_MouseMove">
             <mg:MonoGameContentControl.DataContext>
                 <local:JOP x:Name="Jop" />
             </mg:MonoGameContentControl.DataContext>
