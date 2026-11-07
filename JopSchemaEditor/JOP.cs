@@ -5,6 +5,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.BitmapFonts;
 using MonoGame.WpfCore.MonoGameControls;
 using System.IO;
+using System.Windows.Input;
 
 namespace JopSchemaEditor
 {
@@ -22,6 +23,8 @@ namespace JopSchemaEditor
 
         private SpriteBatch _spriteBatch = null!;
         private GameStore _store = null!;
+        private Point _selectionStart = default;
+        private bool _isSelecting = false;
 
         public override void LoadContent()
         {
@@ -40,7 +43,21 @@ namespace JopSchemaEditor
             _mouseX = (int)(mouseState.Position.X / _store.FontWidth);
             _mouseY = (int)(mouseState.Position.Y / _store.FontHeight);
 
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            if (App.SelectedButton.Name == -1) // VYBRAT
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    Point point = new(_mouseX, _mouseY);
+                    _selectionStart = point;
+                    SetSelection(_selectionStart, point);
+                    _isSelecting = true;
+                }
+                else if (mouseState.RightButton == ButtonState.Pressed)
+                {
+                    App.Selection = null;
+                }
+            }
+            else if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 if (InsertTextBox())
                     return;
@@ -58,7 +75,15 @@ namespace JopSchemaEditor
             _mouseX = (int)(mouseState.Position.X / _store.FontWidth);
             _mouseY = (int)(mouseState.Position.Y / _store.FontHeight);
 
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            if (App.SelectedButton.Name == -1) // VYBRAT
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    Point point = new(_mouseX, _mouseY);
+                    SetSelection(_selectionStart, point);
+                }
+            }
+            else if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 InsertField();
             }
@@ -66,6 +91,60 @@ namespace JopSchemaEditor
             {
                 RemoveField();
             }
+        }
+
+        public override void OnMouseUp(MouseStateArgs mouseState)
+        {
+            _mouseX = (int)(mouseState.Position.X / _store.FontWidth);
+            _mouseY = (int)(mouseState.Position.Y / _store.FontHeight);
+
+            if (App.SelectedButton.Name == -1) // VYBRAT
+            {
+                if (_isSelecting)
+                {
+                    Point point = new(_mouseX, _mouseY);
+                    SetSelection(_selectionStart, point);
+                    _isSelecting = false;
+                }
+            }
+        }
+
+        public override void OnKeyDown(KeyEventArgs e)
+        {
+            if (App.Selection.HasValue && !_isSelecting)
+            {
+                Rectangle rect = App.Selection.Value;
+
+                switch (e.Key)
+                {
+                    case Key.Up:
+                        App.Selection = SelectionHelper.MoveUp(rect);
+                        break;
+                    case Key.Down:
+                        App.Selection = SelectionHelper.MoveDown(rect);
+                        break;
+                    case Key.Left:
+                        App.Selection = SelectionHelper.MoveLeft(rect);
+                        break;
+                    case Key.Right:
+                        App.Selection = SelectionHelper.MoveRight(rect);
+                        break;
+                    case Key.Delete:
+                        SelectionHelper.Delete(rect);
+                        App.Selection = null;
+                        break;
+                }
+            }
+        }
+
+        private static void SetSelection(Point start, Point end)
+        {
+            int x = Math.Min(start.X, end.X);
+            int y = Math.Min(start.Y, end.Y);
+            int width = Math.Abs(start.X - end.X) + 1;
+            int height = Math.Abs(start.Y - end.Y) + 1;
+
+            App.Selection = new Rectangle(x, y, width, height);
         }
 
         private bool InsertTextBox()
@@ -100,7 +179,7 @@ namespace JopSchemaEditor
                 RemoveField();
                 return true;
             }
-            
+
             if (name == -4) // OBARVIT
             {
                 ref JOPData data = ref App.Fields[_mouseX, _mouseY];
@@ -175,10 +254,15 @@ namespace JopSchemaEditor
                 stringLength = App.AwaitingString?.Length ?? 0;
             }
 
-            if (stringLength == 0)
-                return;
-
-            _spriteBatch.DrawRectangle(_mouseX * _store.FontWidth, _mouseY * _store.FontHeight, stringLength * _store.FontWidth, _store.FontHeight, ESAColor.Green, 1f);
+            if (stringLength > 0)
+            {
+                _spriteBatch.DrawRectangle(_mouseX * _store.FontWidth, _mouseY * _store.FontHeight, stringLength * _store.FontWidth, _store.FontHeight, ESAColor.Turquoise, 1f);
+            }
+            else if (App.Selection.HasValue)
+            {
+                Rectangle rect = App.Selection.Value;
+                _spriteBatch.DrawRectangle(rect.X * _store.FontWidth, rect.Y * _store.FontHeight, rect.Width * _store.FontWidth, rect.Height * _store.FontHeight, ESAColor.Green, 1f);
+            }
         }
 
         public void SaveScreenshot(string fileName)

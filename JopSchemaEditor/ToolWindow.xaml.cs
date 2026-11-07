@@ -43,13 +43,13 @@ namespace JopSchemaEditor
             EXSTYLE(hwnd);
         }
 
-        private void STYLE(nint hwnd)
+        private static void STYLE(nint hwnd)
         {
             int currentStyle = GetWindowLong(hwnd, GWL_STYLE);
             SetWindowLong(hwnd, GWL_STYLE, currentStyle & ~WS_SYSMENU);
         }
 
-        private void EXSTYLE(nint hwnd)
+        private static void EXSTYLE(nint hwnd)
         {
             int currentStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
             SetWindowLong(hwnd, GWL_EXSTYLE, currentStyle | WS_EX_TRANSPARENT);

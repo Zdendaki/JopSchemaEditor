@@ -15,6 +15,8 @@ public partial class App : Application
 
     internal static string? AwaitingString = null;
 
+    internal static Rectangle? Selection { get; set; } = null;
+
     internal static Color AwaitingColor = ESAColor.Gray;
 
     public static bool LightMode { get; internal set; } = false;

@@ -7,7 +7,8 @@
         mc:Ignorable="d" WindowStartupLocation="CenterOwner"
         Title="Změnit velikost" Width="300" SizeToContent="Height" ResizeMode="NoResize">
     <StackPanel Orientation="Vertical" Margin="20">
-        <ComboBox x:Name="resolution" Margin="5">
+        <Label Content="Rozlišení obrazovky:" Margin="-4 0"/>
+        <ComboBox x:Name="resolution">
             <local:Resolution Width="640" Height="480" />
             <local:Resolution Width="800" Height="600" />
             <local:Resolution Width="1024" Height="768" />
@@ -18,6 +19,8 @@
             <local:Resolution Width="2048" Height="768" />
             <local:Resolution Width="2560" Height="1440" />
         </ComboBox>
-        <Button Content="Uložit" Margin="5" Click="Save_Click" />
+        <Label Content="Počet monitorů:" Margin="-4 5 0 0" />
+        <TextBox x:Name="count" Text="1" MaxLength="1" />
+        <Button Content="Uložit" Margin="0 10 0 0" Click="Save_Click" />
     </StackPanel>
 </Window>

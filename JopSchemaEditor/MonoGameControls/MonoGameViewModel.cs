@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Windows;
+using System.Windows.Input;
 
 namespace MonoGame.WpfCore.MonoGameControls;
 
@@ -34,9 +35,13 @@ public interface IMonoGameViewModel : IDisposable
 
     void OnMouseUp(MouseStateArgs mouseState);
 
-    void OnDrop(DragStateArgs dragState);
-
     void OnMouseWheel(MouseStateArgs args, int delta);
+
+    void OnKeyDown(KeyEventArgs e);
+
+    void OnKeyUp(KeyEventArgs e);
+
+    void OnDrop(DragStateArgs dragState);
 
     void SizeChanged(object sender, SizeChangedEventArgs args);
 }
@@ -50,6 +55,7 @@ public class MonoGameViewModel : ViewModel, IMonoGameViewModel
     public void Dispose()
     {
         Content?.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     public IGraphicsDeviceService GraphicsDeviceService { get; set; } = default!;
@@ -120,6 +126,10 @@ public class MonoGameViewModel : ViewModel, IMonoGameViewModel
     public virtual void OnMouseUp(MouseStateArgs mouseState) { }
 
     public virtual void OnMouseWheel(MouseStateArgs args, int delta) { }
+
+    public virtual void OnKeyDown(KeyEventArgs e) { }
+
+    public virtual void OnKeyUp(KeyEventArgs e) { }
 
     public virtual void OnDrop(DragStateArgs dragState) { }
 

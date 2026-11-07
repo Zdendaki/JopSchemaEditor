@@ -49,6 +49,8 @@ public sealed class MonoGameContentControl : ContentControl, IDisposable
         if (DesignerProperties.GetIsInDesignMode(this))
             return;
 
+        Background = Brushes.Transparent;
+        Focusable = true;
         _instanceCount++;
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;

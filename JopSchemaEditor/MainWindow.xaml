@@ -6,7 +6,7 @@
         xmlns:mg="clr-namespace:MonoGame.WpfCore.MonoGameControls"
         xmlns:local="clr-namespace:JopSchemaEditor"
         mc:Ignorable="d" Closing="Window_Closing"
-        Title="JOP editor" Background="Black" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+        Title="JOP editor" Background="Black" ResizeMode="CanResizeWithGrip">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -30,10 +30,12 @@
 
         <Label x:Name="PositionLabel" HorizontalAlignment="Right" Foreground="White" Content="0:0" Padding="0" VerticalAlignment="Center" Margin="10,0" />
 
-        <mg:MonoGameContentControl x:Name="JopControl" Grid.Row="1" Width="1024" Height="768" MouseMove="JopControl_MouseMove">
-            <mg:MonoGameContentControl.DataContext>
-                <local:JOP x:Name="Jop" />
-            </mg:MonoGameContentControl.DataContext>
-        </mg:MonoGameContentControl>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <mg:MonoGameContentControl x:Name="JopControl" Width="1024" Height="768" MouseMove="JopControl_MouseMove">
+                <mg:MonoGameContentControl.DataContext>
+                    <local:JOP x:Name="Jop" />
+                </mg:MonoGameContentControl.DataContext>
+            </mg:MonoGameContentControl>
+        </ScrollViewer>
     </Grid>
 </Window>

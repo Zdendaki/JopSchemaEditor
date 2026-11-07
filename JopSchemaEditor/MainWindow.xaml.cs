@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 
 namespace JopSchemaEditor;
 
@@ -314,9 +315,21 @@ public partial class MainWindow : Window
         }
     }
 
-    private void JopControl_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+    private void JopControl_MouseMove(object sender, MouseEventArgs e)
     {
         var position = e.GetPosition(JopControl);
         PositionLabel.Content = $"{(int)position.X / 8}:{(int)position.Y / 12}";
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        Jop.OnKeyDown(e);
+    }
+
+    protected override void OnKeyUp(KeyEventArgs e)
+    {
+        base.OnKeyUp(e);
+        Jop.OnKeyUp(e);
     }
 }
