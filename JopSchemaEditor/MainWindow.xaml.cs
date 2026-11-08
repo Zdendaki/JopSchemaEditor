@@ -48,6 +48,9 @@ public partial class MainWindow : Window
 
         InitializeComponent();
 
+        MaxWidth = SystemParameters.VirtualScreenWidth;
+        MaxHeight = SystemParameters.VirtualScreenHeight;
+
         RefreshFileName();
         _toolWindow = new();
         Loaded += MainWindow_Loaded;
@@ -321,15 +324,20 @@ public partial class MainWindow : Window
         PositionLabel.Content = $"{(int)position.X / 8}:{(int)position.Y / 12}";
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
         Jop.OnKeyDown(e);
     }
 
-    protected override void OnKeyUp(KeyEventArgs e)
+    protected override void OnPreviewKeyUp(KeyEventArgs e)
     {
         base.OnKeyUp(e);
         Jop.OnKeyUp(e);
+    }
+
+    private void ScrollViewer_PreviewKeyIgnore(object sender, KeyEventArgs e)
+    {
+        e.Handled = true;
     }
 }
