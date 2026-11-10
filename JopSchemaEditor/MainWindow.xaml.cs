@@ -59,8 +59,8 @@ public partial class MainWindow : Window
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         _toolWindow.Owner = this;
-        _toolWindow.Left = Left + ActualWidth + 5;
-        _toolWindow.Top = Top;
+        _toolWindow.Left = Left + ActualWidth - 250;
+        _toolWindow.Top = Top + 100;
         _toolWindow.Show();
     }
 
